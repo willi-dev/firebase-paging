@@ -33,3 +33,7 @@
 .element-hide{
   display: none;
 }
+ul, ol{
+  list-style: none;
+  text-align: left;
+}

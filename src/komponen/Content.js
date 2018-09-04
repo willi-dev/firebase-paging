@@ -4,7 +4,7 @@ import { firebaseConfig } from '../serpis';
 let INITIAL_STATE = {
   lastKey: '',
   nextPage: 1,
-  project: {},
+  project: [],
   lastPage: false,
 }
 const perPage = 4;
@@ -32,27 +32,29 @@ class Content extends Component {
 
     dataProject.on('value', snapshot => {
       let arrayOfKeys = (nextPage === 1) ? Object.keys( snapshot.val() ).sort().reverse() : Object.keys( snapshot.val() ).sort().reverse().slice(1);
-      console.log( arrayOfKeys );
+      // console.log( arrayOfKeys );
 
-      let arrayProject = arrayOfKeys.reduce( ( conc, current ) => {
-        conc[current] = snapshot.val()[current];
-        return conc;
-      }, {});
+      let arrayProject = arrayOfKeys.map( (val, key) => (
+        snapshot.val()[val]
+      ))
 
       last = arrayOfKeys[arrayOfKeys.length-1];
 
-      console.log( arrayProject );
+      // console.log( arrayProject );
 
       this.setState({
         lastKey: arrayOfKeys[arrayOfKeys.length-1],
-        project: { ...project, ...arrayProject },
+        project: [ ...project, ...arrayProject ],
         nextPage: nextPage+1,
-        // lastPage: ( perPage !== snapshot.numChildren() ) ? !lastPage : lastPage
-        lastPage: false,
+        lastPage: ( snapshot.numChildren() < perPage ) ? !lastPage : lastPage
       });
 
-      console.log( this.state )
+      console.log( this.state.project )
+      // project.map( ( val, idx ) => {
+      //   console.log( val.company );
+      // })
     });
+
   }
 
   clickLoadProject() {
@@ -68,11 +70,20 @@ class Content extends Component {
   }
 
   render() {
-    let { lastKey, currentPage, project, lastPage } = this.state;
-
+    let { lastKey, currentPage, lastPage } = this.state;
     return (
       <div>
         <h1>this is content </h1>
+        <ul>
+        {
+          this.state.project.map( (item, index) => (
+            <li key={index}>
+              <h5>{item.name}</h5>
+              <p>{item.description}</p>
+            </li>
+          ))
+        }
+        </ul>
 
         { 
           ( lastPage ) && (
