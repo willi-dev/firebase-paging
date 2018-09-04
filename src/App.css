@@ -34,6 +34,10 @@
   display: none;
 }
 ul, ol{
+  padding-left: 0;
   list-style: none;
   text-align: left;
+}
+.container-project{
+  padding: 20px 30px;
 }

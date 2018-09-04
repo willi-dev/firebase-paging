@@ -26,21 +26,16 @@ class Content extends Component {
   loadProject = () => {
     let { lastKey, lastPage, nextPage, project } = this.state;
     let dataProject, last;
-    console.log( 'lastKey: ' + lastKey );
 
     dataProject = (nextPage === 1) ? firebaseConfig.database().ref('project').orderByKey().limitToLast(perPage) : firebaseConfig.database().ref('project').orderByKey().endAt(lastKey).limitToLast(perPage+1);
 
     dataProject.on('value', snapshot => {
       let arrayOfKeys = (nextPage === 1) ? Object.keys( snapshot.val() ).sort().reverse() : Object.keys( snapshot.val() ).sort().reverse().slice(1);
-      // console.log( arrayOfKeys );
+      last = arrayOfKeys[arrayOfKeys.length-1];
 
       let arrayProject = arrayOfKeys.map( (val, key) => (
         snapshot.val()[val]
       ))
-
-      last = arrayOfKeys[arrayOfKeys.length-1];
-
-      // console.log( arrayProject );
 
       this.setState({
         lastKey: arrayOfKeys[arrayOfKeys.length-1],
@@ -49,10 +44,6 @@ class Content extends Component {
         lastPage: ( snapshot.numChildren() < perPage ) ? !lastPage : lastPage
       });
 
-      console.log( this.state.project )
-      // project.map( ( val, idx ) => {
-      //   console.log( val.company );
-      // })
     });
 
   }
@@ -72,8 +63,8 @@ class Content extends Component {
   render() {
     let { lastKey, currentPage, lastPage } = this.state;
     return (
-      <div>
-        <h1>this is content </h1>
+      <div className="container-project">
+        <h1>Load Project </h1>
         <ul>
         {
           this.state.project.map( (item, index) => (
